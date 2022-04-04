@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.springframework.samples.petclinic.repository.springdatajpa;
+package org.springframework.samples.petclinic.repository;
 
 import org.springframework.samples.petclinic.model.Specialty;
 
 /**
  * @author Vitaliy Fedoriv
- *
  */
 
 public interface SpecialtyRepositoryOverride {
 
-	public void delete(Specialty specialty);
+    public void delete(Specialty specialty);
 
 }

@@ -15,10 +15,11 @@
  */
 package org.springframework.samples.petclinic.repository;
 
-import java.util.Collection;
-
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.repository.Repository;
 import org.springframework.samples.petclinic.model.Vet;
+
+import java.util.Collection;
 
 /**
  * Repository class for <code>Vet</code> domain objects All method names are compliant with Spring Data naming
@@ -30,7 +31,7 @@ import org.springframework.samples.petclinic.model.Vet;
  * @author Michael Isvy
  * @author Vitaliy Fedoriv
  */
-public interface VetRepository {
+public interface VetRepository extends Repository<Vet, Integer> {
 
     /**
      * Retrieve all <code>Vet</code>s from the data store.
@@ -39,11 +40,11 @@ public interface VetRepository {
      */
     Collection<Vet> findAll() throws DataAccessException;
 
-	Vet findById(Integer id) throws DataAccessException;
+    Vet findById(Integer id) throws DataAccessException;
 
-	void save(Vet vet) throws DataAccessException;
+    void save(Vet vet) throws DataAccessException;
 
-	void delete(Vet vet) throws DataAccessException;
+    void delete(Vet vet) throws DataAccessException;
 
 
 }

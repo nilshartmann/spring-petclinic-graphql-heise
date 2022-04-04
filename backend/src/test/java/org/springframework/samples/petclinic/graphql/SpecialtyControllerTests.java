@@ -2,13 +2,28 @@ package org.springframework.samples.petclinic.graphql;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
+
+import static org.mockito.Mockito.when;
+
 public class SpecialtyControllerTests extends AbstractClinicGraphqlTests {
+
+    @MockBean
+    private VetServiceClient vetServiceClient;
 
     @Test
     public void specialtiesQueryReturnsList() {
+        when(vetServiceClient.specialties())
+            .thenReturn(List.of(
+                new SpecialtyResource(1, "A"),
+                new SpecialtyResource(2, "B"),
+                new SpecialtyResource(3, "C")
+            ));
         String query = "query {" +
             "  specialties {" +
             "    id" +
@@ -22,89 +37,5 @@ public class SpecialtyControllerTests extends AbstractClinicGraphqlTests {
             .path("specialties").entityList(Object.class).hasSizeGreaterThan(2);
         ;
     }
-
-    @Test
-    @DirtiesContext
-    public void updateSpecialtyWorks() {
-        String query = "mutation {" +
-            "  updateSpecialty(input: {specialtyId: 1, name: \"test\"}) {" +
-            "    specialty {" +
-            "      id" +
-            "      name" +
-            "    }" +
-            "  }" +
-            "}";
-
-        userRoleGraphQlTester
-            .document(query)
-            .execute()
-            .path("updateSpecialty.specialty.name").entity(String.class).isEqualTo("test");
-        ;
-    }
-
-    @Test
-    @DirtiesContext
-    public void addSpecialtyWorks() {
-        String query = "mutation {" +
-            "  addSpecialty(input: {name: \"xxx\"}) {" +
-            "    specialty {" +
-            "      id" +
-            "      name" +
-            "    }" +
-            "  }" +
-            "}";
-
-        userRoleGraphQlTester
-            .document(query)
-            .execute()
-            .path("addSpecialty.specialty.name").entity(String.class).isEqualTo("xxx");
-        ;
-    }
-
-    @Test
-    @DirtiesContext
-    public void addAndRemoveSpecialtyWorks() {
-        String getQuery = "query {" +
-            "  specialties {" +
-            "    id" +
-            "    name" +
-            "  }" +
-            "}";
-
-        final int specialtyCount = userRoleGraphQlTester
-            .document(getQuery)
-            .execute()
-            .path("specialties").entityList(Object.class).get().size();
-
-        String query = "mutation {" +
-            "  addSpecialty(input: {name: \"yyy\"}) {" +
-            "    specialty {" +
-            "      id" +
-            "      name" +
-            "    }" +
-            "  }" +
-            "}";
-
-        GraphQlTester.Response response = userRoleGraphQlTester
-            .document(query)
-            .execute();
-        response
-            .path("addSpecialty.specialty.name").entity(String.class).isEqualTo("yyy");
-        String id = response.path("addSpecialty.specialty.id").entity(String.class).get();
-        Assertions.assertNotNull(id);
-
-        String removeQuery = "mutation {" +
-            "  removeSpecialty(input: {specialtyId: " + id + "}) {" +
-            "    specialties {" +
-            "      id" +
-            "    }" +
-            "  }" +
-            "}";
-
-        this.userRoleGraphQlTester.document(removeQuery)
-            .execute()
-            .path("removeSpecialty.specialties").entityList(Object.class).hasSize(specialtyCount);
-    }
-
 
 }

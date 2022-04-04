@@ -1,7 +1,4 @@
 DROP TABLE visits IF EXISTS CASCADE;
-DROP TABLE specialties IF EXISTS CASCADE;
-DROP TABLE vet_specialties IF EXISTS CASCADE;
-DROP TABLE vets IF EXISTS CASCADE;
 DROP TABLE pets IF EXISTS CASCADE;
 DROP TABLE types IF EXISTS CASCADE;
 DROP TABLE owners IF EXISTS CASCADE;
@@ -27,31 +24,6 @@ ALTER TABLE roles
     ADD CONSTRAINT fk_username FOREIGN KEY (username) REFERENCES users (username);
 CREATE INDEX fk_username_idx ON roles (username);
 
-
-CREATE TABLE vets
-(
-    id         INTEGER IDENTITY PRIMARY KEY,
-    first_name VARCHAR(30),
-    last_name  VARCHAR(30)
-);
-CREATE INDEX vets_last_name ON vets (last_name);
-
-CREATE TABLE specialties
-(
-    id   INTEGER IDENTITY PRIMARY KEY,
-    name VARCHAR(80)
-);
-CREATE INDEX specialties_name ON specialties (name);
-
-CREATE TABLE vet_specialties
-(
-    vet_id       INTEGER NOT NULL,
-    specialty_id INTEGER NOT NULL
-);
-ALTER TABLE vet_specialties
-    ADD CONSTRAINT fk_vet_specialties_vets FOREIGN KEY (vet_id) REFERENCES vets (id);
-ALTER TABLE vet_specialties
-    ADD CONSTRAINT fk_vet_specialties_specialties FOREIGN KEY (specialty_id) REFERENCES specialties (id);
 
 CREATE TABLE types
 (
@@ -95,6 +67,4 @@ CREATE TABLE visits
 );
 ALTER TABLE visits
     ADD CONSTRAINT fk_visits_pets FOREIGN KEY (pet_id) REFERENCES pets (id);
-ALTER TABLE visits
-    ADD CONSTRAINT fk_visits_vets FOREIGN KEY (vet_id) REFERENCES vets (id);
 CREATE INDEX visits_pet_id ON visits (pet_id);

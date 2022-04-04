@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package org.springframework.samples.petclinic.repository.springdatajpa;
+package org.springframework.samples.petclinic.repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.repository.Repository;
 import org.springframework.samples.petclinic.model.Specialty;
+
+import java.util.Collection;
 
 /**
  * @author Vitaliy Fedoriv
- *
  */
 
-public class SpringDataSpecialtyRepositoryImpl implements SpecialtyRepositoryOverride {
+public interface SpecialtyRepository extends Repository<Specialty, Integer>, SpecialtyRepositoryOverride {
 
-	@PersistenceContext
-    private EntityManager em;
+    Specialty findById(Integer id) throws DataAccessException;
 
-	@Override
-	public void delete(Specialty specialty) {
-		String specId = specialty.getId().toString();
-		this.em.createNativeQuery("DELETE FROM vet_specialties WHERE specialty_id=" + specId).executeUpdate();
-		this.em.createQuery("DELETE FROM Specialty specialty WHERE id=" + specId).executeUpdate();
-	}
+    Collection<Specialty> findAll() throws DataAccessException;
+
+    void save(Specialty specialty) throws DataAccessException;
+
+    void delete(Specialty specialty) throws DataAccessException;
 
 }

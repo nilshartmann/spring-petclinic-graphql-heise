@@ -57,7 +57,7 @@ In the GitPod editor you can make changes to the app, and after saving the app w
 
 ## Running locally
 
-The server is implemented in the `backend` folder and can be started either from your IDE (`org.springframework.samples.petclinic.PetClinicApplication`) or
+The server is implemented in the `backend` folder and can be started either from your IDE (`org.springframework.samples.petclinic.VetServiceApplication`) or
 using maven from the root folder of the repository:
 
 ```

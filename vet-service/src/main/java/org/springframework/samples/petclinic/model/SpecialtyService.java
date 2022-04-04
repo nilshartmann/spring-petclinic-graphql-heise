@@ -19,7 +19,7 @@ public class SpecialtyService {
     }
 
     @Transactional
-    public Specialty addSpecialty(@NotEmpty  String name) {
+    public Specialty addSpecialty(@NotEmpty String name) {
         Specialty specialty = new Specialty();
         specialty.setName(name);
         specialtyRepository.save(specialty);

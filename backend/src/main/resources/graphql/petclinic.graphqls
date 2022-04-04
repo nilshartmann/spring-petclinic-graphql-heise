@@ -192,13 +192,6 @@ type Mutation {
 
     # Add a new Veterinary (only allowed for users having Role ROLE_MANAGER)
     addVet(input: AddVetInput!): AddVetPayload!
-
-    # Add a Specialty
-    addSpecialty(input: AddSpecialtyInput!): AddSpecialtyPayload!
-
-    # Update (rename) a Specialty
-    updateSpecialty(input: UpdateSpecialtyInput!): UpdateSpecialtyPayload!
-    removeSpecialty(input: RemoveSpecialtyInput!): RemoveSpecialtyPayload!
 }
 
 # The Input for AddPet mutation

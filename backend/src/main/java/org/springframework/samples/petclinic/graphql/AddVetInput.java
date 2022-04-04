@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.graphql;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Nils Hartmann
@@ -12,15 +13,13 @@ public class AddVetInput {
     private String lastName;
     private List<Integer> specialtyIds;
 
-    public static AddVetInput fromArgument(Map<String, Object> argument) {
+    public AddVetInput() {
+    }
 
-        AddVetInput addVetInput = new AddVetInput();
-        addVetInput.setFirstName((String) argument.get("firstName"));
-        addVetInput.setLastName((String) argument.get("lastName"));
-        addVetInput.setSpecialtyIds((List<Integer>) argument.get("specialtyIds"));
-
-        return addVetInput;
-
+    public AddVetInput(String firstName, String lastName, List<Integer> specialtyIds) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.specialtyIds = specialtyIds;
     }
 
     public String getFirstName() {
@@ -45,5 +44,18 @@ public class AddVetInput {
 
     public void setSpecialtyIds(List<Integer> specialtyIds) {
         this.specialtyIds = specialtyIds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AddVetInput that = (AddVetInput) o;
+        return Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(specialtyIds, that.specialtyIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, specialtyIds);
     }
 }

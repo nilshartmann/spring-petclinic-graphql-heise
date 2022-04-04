@@ -56,16 +56,10 @@ abstract class AbstractClinicRepositoryTests {
     private PetRepository petRepository;
 
     @Autowired
-    private VetRepository vetRepository;
-
-    @Autowired
     private OwnerRepository ownerRepository;
 
     @Autowired
     private VisitRepository visitRepository;
-
-    @Autowired
-    private SpecialtyRepository specialtyRepository;
 
     @Autowired
     private PetTypeRepository petTypeRepository;
@@ -183,17 +177,6 @@ abstract class AbstractClinicRepositoryTests {
     }
 
     @Test
-    void shouldFindVets() {
-        Collection<Vet> vets = this.vetRepository.findAll();
-
-        Vet vet = EntityUtils.getById(vets, Vet.class, 3);
-        assertThat(vet.getLastName()).isEqualTo("Douglas");
-        assertThat(vet.getNrOfSpecialties()).isEqualTo(2);
-        assertThat(vet.getSpecialties().get(0).getName()).isEqualTo("dentistry");
-        assertThat(vet.getSpecialties().get(1).getName()).isEqualTo("surgery");
-    }
-
-    @Test
     @Transactional
     void shouldAddNewVisitForPet() {
         Pet pet7 = this.petRepository.findById(7);
@@ -306,55 +289,6 @@ abstract class AbstractClinicRepositoryTests {
     }
 
     @Test
-    void shouldFindVetDyId(){
-    	Vet vet = this.vetRepository.findById(1);
-    	assertThat(vet.getFirstName()).isEqualTo("James");
-    	assertThat(vet.getLastName()).isEqualTo("Carter");
-    }
-
-    @Test
-    @Transactional
-    void shouldInsertVet() {
-        Collection<Vet> vets = this.vetRepository.findAll();
-        int found = vets.size();
-
-        Vet vet = new Vet();
-        vet.setFirstName("John");
-        vet.setLastName("Dow");
-
-        this.vetRepository.save(vet);
-        assertThat(vet.getId().longValue()).isNotEqualTo(0);
-
-        vets = this.vetRepository.findAll();
-        assertThat(vets.size()).isEqualTo(found + 1);
-    }
-
-    @Test
-    @Transactional
-    void shouldUpdateVet(){
-    	Vet vet = this.vetRepository.findById(1);
-    	String oldLastName = vet.getLastName();
-        String newLastName = oldLastName + "X";
-        vet.setLastName(newLastName);
-        this.vetRepository.save(vet);
-        vet = this.vetRepository.findById(1);
-        assertThat(vet.getLastName()).isEqualTo(newLastName);
-    }
-
-    @Test
-    @Transactional
-    void shouldDeleteVet(){
-    	Vet vet = this.vetRepository.findById(1);
-        this.vetRepository.delete(vet);
-        try {
-        	vet = this.vetRepository.findById(1);
-		} catch (Exception e) {
-			vet = null;
-		}
-        assertThat(vet).isNull();
-    }
-
-    @Test
     void shouldFindAllOwners(){
         Collection<Owner> owners = this.ownerRepository.findAll();
         Owner owner1 = EntityUtils.getById(owners, Owner.class, 1);
@@ -442,63 +376,6 @@ abstract class AbstractClinicRepositoryTests {
 			petType = null;
 		}
         assertThat(petType).isNull();
-    }
-
-    @Test
-    public void shouldFindSpecialtyById(){
-    	Specialty specialty = this.specialtyRepository.findById(1);
-    	assertThat(specialty.getName()).isEqualTo("radiology");
-    }
-
-    @Test
-    public void shouldFindAllSpecialtys(){
-        Collection<Specialty> specialties = this.specialtyRepository.findAll();
-        Specialty specialty1 = EntityUtils.getById(specialties, Specialty.class, 1);
-        assertThat(specialty1.getName()).isEqualTo("radiology");
-        Specialty specialty3 = EntityUtils.getById(specialties, Specialty.class, 3);
-        assertThat(specialty3.getName()).isEqualTo("dentistry");
-    }
-
-    @Test
-    @Transactional
-    public void shouldInsertSpecialty() {
-        Collection<Specialty> specialties = this.specialtyRepository.findAll();
-        int found = specialties.size();
-
-        Specialty specialty = new Specialty();
-        specialty.setName("dermatologist");
-
-        this.specialtyRepository.save(specialty);
-        assertThat(specialty.getId().longValue()).isNotEqualTo(0);
-
-        specialties = this.specialtyRepository.findAll();
-        assertThat(specialties.size()).isEqualTo(found + 1);
-    }
-
-    @Test
-    @Transactional
-    public void shouldUpdateSpecialty(){
-    	Specialty specialty = this.specialtyRepository.findById(1);
-    	String oldLastName = specialty.getName();
-        String newLastName = oldLastName + "X";
-        specialty.setName(newLastName);
-        this.specialtyRepository.save(specialty);
-        specialty = this.specialtyRepository.findById(1);
-        assertThat(specialty.getName()).isEqualTo(newLastName);
-    }
-
-    @Test
-    @Transactional
-    public void shouldDeleteSpecialty(){
-    	Specialty specialty = this.specialtyRepository.findById(1);
-        this.specialtyRepository.delete(specialty);
-        flush();
-        try {
-        	specialty = this.specialtyRepository.findById(1);
-		} catch (Exception e) {
-			specialty = null;
-		}
-        assertThat(specialty).isNull();
     }
 
     protected void flush() {

@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.samples.petclinic.repository.SpecialtyRepository;
 import org.springframework.samples.petclinic.repository.VetRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,6 @@ public class VetService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
     public Vet createVet(String firstName, String lastName, List<Integer> specialtyIds) throws InvalidVetDataException {
         Vet vet = new Vet();
         vet.setFirstName(firstName);

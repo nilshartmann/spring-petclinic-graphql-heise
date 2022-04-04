@@ -1,20 +1,39 @@
 package org.springframework.samples.petclinic.graphql;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.execution.ErrorType;
+import org.springframework.samples.petclinic.model.InvalidVetDataException;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public class VetControllerTests extends AbstractClinicGraphqlTests{
+    @MockBean
+    private VetServiceClient vetServiceClient;
 
-    /**
-     * EXAMPLE:
-     * --------------------------
-     *
-     * Mutation returning a union type (AddVetPayload) with data or error, returns data if invoked correctly
-     */
+    private static SpecialtyResource specialtyOne =
+        new SpecialtyResource(1, "radiology");
+
+    private static SpecialtyResource specialtyTwo =
+        new SpecialtyResource(2, "surgery");
+
+    private static SpecialtyResource specialtyThree =
+        new SpecialtyResource(3, "dentistry");
+
     @Test
     void shouldAddNewVet() {
+        final AddVetInput input = new AddVetInput("Klaus", "Smith",
+            List.of(1, 3));
+
+        when(vetServiceClient.addVet(input))
+            .thenReturn(new VetResource(123, "Klaus", "Smith",
+                List.of(specialtyThree, specialtyOne)));
+
         managerRoleGraphQlTester
             .documentName("addVetMutation")
             .variable("specialtyIds", new int[]{1, 3})
@@ -27,15 +46,11 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
             .path("addVet.vet.specialties[1].id").entity(String.class).isEqualTo("1");
     }
 
-    /**
-     * EXAMPLE:
-     * --------------------------
-     *
-     * Mutation returning a union type (AddVetPayload) with data or error, returns "domain" error
-     * type if invoked correctly
-     */
     @Test
     void shouldReturnErrorPayloadOnUnknownSpecialty() {
+        when(vetServiceClient.addVet(any()))
+            .thenThrow(new InvalidVetDataException("Specialty with Id '666' not found"));
+
         managerRoleGraphQlTester
             .documentName("addVetMutation")
             .variable("specialtyIds", new int[]{666})
@@ -44,12 +59,6 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
             .path("addVet.error").entity(String.class).isEqualTo("Specialty with Id '666' not found");
     }
 
-    /**
-     * EXAMPLE:
-     * --------------------------
-     *
-     * Mutation is secured using fine-grained security with @PreAuth
-     */
     @Test
     void shouldForbidAddingVetsAsUser() {
         userRoleGraphQlTester
@@ -66,6 +75,16 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
 
     @Test
     public void vetsReturnsListOfAllVets() {
+        when(vetServiceClient.vets())
+            .thenReturn(List.of(
+                new VetResource(1, "Klaus", "Dieter", List.of()),
+                new VetResource(2, "Susi", "Meyer", List.of()),
+                new VetResource(3, "Peter", "Miller", List.of(
+                    specialtyOne, specialtyTwo
+                )),
+                new VetResource(4, "Maja", "Smith", List.of())
+            ));
+
         String query = "query {" +
             "  vets {" +
             "    id" +
@@ -96,8 +115,12 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
 
     @Test
     public void vetReturnsVetById() {
+        when(vetServiceClient.vetById(4))
+            .thenReturn(
+                new VetResource(4, "Maja", "Smith", List.of(specialtyTwo))
+            );
         String query = "query {" +
-            "  vet(id:4) {" +
+            "  vet(id:4) { lastName firstName" +
             "    id" +
             "    specialties {" +
             "      id" +

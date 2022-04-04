@@ -15,28 +15,33 @@
  */
 package org.springframework.samples.petclinic.model;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
 /**
- * Simple domain object representing a list of veterinarians. Mostly here to be used for
- * the 'vets' {@link org.springframework.web.servlet.view.xml.MarshallingView}.
+ * Simple JavaBean domain object adds a name property to <code>BaseEntity</code>. Used as
+ * a base class for objects needing these properties.
  *
- * @author Arjen Poutsma
+ * @author Ken Krebs
+ * @author Juergen Hoeller
  */
-@XmlRootElement
-public class Vets {
+@MappedSuperclass
+public class NamedEntity extends BaseEntity {
 
-	private List<Vet> vets;
+    @Column(name = "name")
+    private String name;
 
-	@XmlElement
-	public List<Vet> getVetList() {
-		if (vets == null) {
-			vets = new ArrayList<>();
-		}
-		return vets;
-	}
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 
 }

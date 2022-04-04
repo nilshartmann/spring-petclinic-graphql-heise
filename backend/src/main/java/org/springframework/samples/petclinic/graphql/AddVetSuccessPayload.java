@@ -1,18 +1,16 @@
 package org.springframework.samples.petclinic.graphql;
 
-import org.springframework.samples.petclinic.model.Vet;
-
 /**
  * @author Nils Hartmann
  */
 public class AddVetSuccessPayload implements AddVetPayload {
-    private final Vet vet;
+    private final VetResource vet;
 
-    public AddVetSuccessPayload(Vet vet) {
+    public AddVetSuccessPayload(VetResource vet) {
         this.vet = vet;
     }
 
-    public Vet getVet() {
+    public VetResource getVet() {
         return vet;
     }
 }

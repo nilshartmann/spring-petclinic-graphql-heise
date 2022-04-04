@@ -6,16 +6,12 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
-import org.springframework.samples.petclinic.model.InvalidVetDataException;
-import org.springframework.samples.petclinic.model.Vet;
-import org.springframework.samples.petclinic.model.VetService;
-import org.springframework.samples.petclinic.repository.VetRepository;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.repository.VisitRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * GraphQL handler functions for Vet GraphQL type, Query and Mutation
@@ -30,42 +26,41 @@ public class VetController {
 
     private static final Logger log = LoggerFactory.getLogger(VetController.class);
 
-    private final VetService vetService;
-    private final VetRepository vetRepository;
+    private final VetServiceClient vetServiceClient;
     private final VisitRepository visitRepository;
 
-    public VetController(VetService vetService, VetRepository vetRepository, VisitRepository visitRepository) {
-        this.vetService = vetService;
-        this.vetRepository = vetRepository;
+    public VetController(VetServiceClient vetServiceClient, VisitRepository visitRepository) {
+        this.vetServiceClient = vetServiceClient;
         this.visitRepository = visitRepository;
     }
 
+
     @QueryMapping
-    public List<Vet> vets() {
-        return List.copyOf(vetRepository.findAll());
+    public List<VetResource> vets() {
+        return vetServiceClient.vets();
     }
 
     @QueryMapping
-    public Vet vet(@Argument Integer id) {
-        return vetRepository.findById(id);
+    public VetResource vet(@Argument Integer id) {
+        VetResource result = vetServiceClient.vetById(id);
+        return result;
     }
 
-    @SchemaMapping
-    public VisitConnection visits(Vet vet) {
-        List<Visit> visitList = visitRepository.findByVetId(vet.getId());
+    @SchemaMapping(typeName="Vet")
+    public VisitConnection visits(VetResource vet) {
+        List<Visit> visitList = visitRepository.findByVetId(vet.id());
         return new VisitConnection(visitList);
     }
 
     @MutationMapping
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     public AddVetPayload addVet(@Argument AddVetInput input) {
         try {
-            Vet newVet = vetService.createVet(
-                input.getFirstName(),
-                input.getLastName(),
-                input.getSpecialtyIds());
+            VetResource newVet = vetServiceClient.addVet(input);
 
             return new AddVetSuccessPayload(newVet);
-        } catch (InvalidVetDataException ex) {
+        } catch (Exception ex) {
+            // todo
             return new AddVetErrorPayload(ex.getLocalizedMessage());
         }
     }
