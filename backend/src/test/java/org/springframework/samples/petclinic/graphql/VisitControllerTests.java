@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.WebGraphQlTester;
 import org.springframework.test.annotation.DirtiesContext;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,9 @@ public class VisitControllerTests extends AbstractClinicGraphqlTests {
     @Test
     public void visit_shouldIncludeTreatingVet() {
         when(vetServiceClient.vetById(4))
-            .thenReturn(new VetResource(
+            .thenReturn(Mono.just(new VetResource(
                 4, "Klaus", "Dieter", List.of()
-            ));
+            )));
         userRoleGraphQlTester
             .document("query { pet(id: 8) { id visits { visits { id treatingVet { id } } } } }")
             .execute()
@@ -64,7 +65,7 @@ public class VisitControllerTests extends AbstractClinicGraphqlTests {
     @DirtiesContext
     void shouldAddNewVisitFromVariablesWithVetId(@Autowired WebGraphQlTester graphQlTester) {
         when(vetServiceClient.vetById(anyInt()))
-            .thenReturn(new VetResource(1, "Horst", "Schimansky", List.of()));
+            .thenReturn(Mono.just(new VetResource(1, "Horst", "Schimansky", List.of())));
 
         userRoleGraphQlTester
             .documentName("addVisitMutationWithVariables")

@@ -8,8 +8,11 @@ import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.model.VisitService;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 /**
  * GraphQL handler functions for "Vitis" GraphQL type, Query, Mutation and Subscription
@@ -31,13 +34,14 @@ public class VisitController {
         this.vetServiceClient = vetServiceClient;
     }
 
-    @SchemaMapping
-    public VetResource treatingVet(Visit visit) {
-        if (!visit.hasVetId()) {
-            return null;
-        }
-        return vetServiceClient.vetById(visit.getVetId());
-    }
+
+    record AddVisitInput(
+        int petId,
+        Integer vetId,
+        LocalDate date,
+        @Size(min=5)
+        String description
+    ) {}
 
     @MutationMapping
     public AddVisitPayload addVisit(@Valid @Argument AddVisitInput input) {
@@ -49,6 +53,17 @@ public class VisitController {
         );
 
         return new AddVisitPayload(visit);
+    }
+
+
+
+
+    @SchemaMapping(typeName = "Visit")
+    public Mono<VetResource> treatingVet(Visit visit) {
+        if (!visit.hasVetId()) {
+            return null;
+        }
+        return vetServiceClient.vetById(visit.getVetId());
     }
 
     @SubscriptionMapping

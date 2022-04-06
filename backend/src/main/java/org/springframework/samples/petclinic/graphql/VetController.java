@@ -10,6 +10,8 @@ import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.repository.VisitRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -36,14 +38,13 @@ public class VetController {
 
 
     @QueryMapping
-    public List<VetResource> vets() {
+    public Flux<VetResource> vets() {
         return vetServiceClient.vets();
     }
 
     @QueryMapping
-    public VetResource vet(@Argument Integer id) {
-        VetResource result = vetServiceClient.vetById(id);
-        return result;
+    public Mono<VetResource> vet(@Argument Integer id) {
+        return vetServiceClient.vetById(id);
     }
 
     @SchemaMapping(typeName="Vet")
@@ -56,8 +57,7 @@ public class VetController {
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public AddVetPayload addVet(@Argument AddVetInput input) {
         try {
-            VetResource newVet = vetServiceClient.addVet(input);
-
+            VetResource newVet = vetServiceClient.addVet(input).block();
             return new AddVetSuccessPayload(newVet);
         } catch (Exception ex) {
             // todo

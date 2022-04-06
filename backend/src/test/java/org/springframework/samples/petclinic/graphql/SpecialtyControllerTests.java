@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.annotation.DirtiesContext;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class SpecialtyControllerTests extends AbstractClinicGraphqlTests {
     @Test
     public void specialtiesQueryReturnsList() {
         when(vetServiceClient.specialties())
-            .thenReturn(List.of(
+            .thenReturn(Flux.just(
                 new SpecialtyResource(1, "A"),
                 new SpecialtyResource(2, "B"),
                 new SpecialtyResource(3, "C")

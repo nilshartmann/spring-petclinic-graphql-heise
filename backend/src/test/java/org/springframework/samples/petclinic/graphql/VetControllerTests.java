@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.execution.ErrorType;
 import org.springframework.samples.petclinic.model.InvalidVetDataException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -31,8 +32,8 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
             List.of(1, 3));
 
         when(vetServiceClient.addVet(input))
-            .thenReturn(new VetResource(123, "Klaus", "Smith",
-                List.of(specialtyThree, specialtyOne)));
+            .thenReturn(Mono.just(new VetResource(123, "Klaus", "Smith",
+                List.of(specialtyThree, specialtyOne))));
 
         managerRoleGraphQlTester
             .documentName("addVetMutation")
@@ -76,7 +77,7 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
     @Test
     public void vetsReturnsListOfAllVets() {
         when(vetServiceClient.vets())
-            .thenReturn(List.of(
+            .thenReturn(Flux.just(
                 new VetResource(1, "Klaus", "Dieter", List.of()),
                 new VetResource(2, "Susi", "Meyer", List.of()),
                 new VetResource(3, "Peter", "Miller", List.of(
@@ -117,7 +118,9 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
     public void vetReturnsVetById() {
         when(vetServiceClient.vetById(4))
             .thenReturn(
-                new VetResource(4, "Maja", "Smith", List.of(specialtyTwo))
+                Mono.just(
+                    new VetResource(4, "Maja", "Smith", List.of(specialtyTwo))
+                )
             );
         String query = "query {" +
             "  vet(id:4) { lastName firstName" +
