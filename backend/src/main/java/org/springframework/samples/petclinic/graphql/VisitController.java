@@ -9,6 +9,8 @@ import org.springframework.samples.petclinic.model.VisitService;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 
+import javax.validation.Valid;
+
 /**
  * GraphQL handler functions for "Vitis" GraphQL type, Query, Mutation and Subscription
  *
@@ -38,12 +40,12 @@ public class VisitController {
     }
 
     @MutationMapping
-    public AddVisitPayload addVisit(@Argument AddVisitInput input) {
+    public AddVisitPayload addVisit(@Valid @Argument AddVisitInput input) {
         Visit visit = visitService.addVisit(
-            input.getPetId(),
-            input.getDescription(),
-            input.getDate(),
-            input.getVetId()
+            input.petId(),
+            input.description(),
+            input.date(),
+            input.vetId()
         );
 
         return new AddVisitPayload(visit);

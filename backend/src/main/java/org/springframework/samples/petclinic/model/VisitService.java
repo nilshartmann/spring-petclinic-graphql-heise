@@ -26,14 +26,14 @@ public class VisitService {
     }
 
     @Transactional
-    public Visit addVisit(int petId, @NotEmpty String description, @NotNull LocalDate date, Optional<Integer> vetId) {
+    public Visit addVisit(int petId, @NotEmpty String description, @NotNull LocalDate date, Integer vetId) {
         Pet pet = petRepository.findById(petId);
 
         Visit visit = new Visit();
         visit.setDescription(description);
         visit.setPet(pet);
         visit.setDate(date);
-        vetId.ifPresent(visit::setVetId);
+        visit.setVetId(vetId);
 
         visitRepository.save(visit);
         applicationEventPublisher.publishEvent(new VisitCreatedEvent(visit.getId()));
