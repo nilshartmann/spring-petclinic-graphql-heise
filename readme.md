@@ -1,5 +1,18 @@
 # Spring PetClinic Sample Application using spring-graphql
 
+This is a fork of the [Spring Pet Clinic Sample Application
+for Spring-GraphQL](https://github.com/spring-petclinic/spring-petclinic-graphql).
+It contains the source code for my (german) article on
+Spring GraphQL for "heise Developer".
+
+Compared to the original example, this one uses also a Microservice
+in the backend to retrieve data.
+
+If you want to start the application, as described below,
+please also start the `VetService` microservice.
+
+# Original README
+
 This PetClinic version uses the new [spring-graphql](https://github.com/spring-projects/spring-graphql) project, that has been [introduced](https://spring.io/blog/2021/07/06/hello-spring-graphql) in july 2021
 and is going to be shipped with Spring Boot 2.7.
 
