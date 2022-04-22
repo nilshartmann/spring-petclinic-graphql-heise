@@ -9,7 +9,32 @@ Compared to the original example, this one uses also a Microservice
 in the backend to retrieve data.
 
 If you want to start the application, as described below,
-please also start the `VetService` microservice.
+please also start the `VetService` microservice:
+
+```bash
+# Open terminal in root-directory:
+./mvnw spring-boot:run -pl vet-service
+
+# Open second terminal in root-directory:
+./mvnw spring-boot:run -pl backend
+```
+
+* You can now open the `GraphiQL` explorer on `http://localhost:9977`. 
+* For more informations about GraphiQL and its usage, see below in the original README.
+
+If you want to start the React frontend, use npm:
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# start frontend
+npm start
+```
+
+* The frontend runs on `http://localhost:3000`
+* For more information about the frontend, see below in original README.
 
 ## Support and Consulting for GraphQL
 
