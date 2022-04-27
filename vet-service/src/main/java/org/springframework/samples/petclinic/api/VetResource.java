@@ -11,6 +11,9 @@ public record VetResource(Integer id,
 ) {
 
     static VetResource fromVet(Vet vet) {
+        if (vet == null) {
+            return null;
+        }
         return new VetResource(
             vet.getId(),
             vet.getFirstName(),

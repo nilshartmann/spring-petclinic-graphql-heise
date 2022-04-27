@@ -36,7 +36,7 @@ public class PetControllerTests extends AbstractClinicGraphqlTests {
         userRoleGraphQlTester
             .document("query { pet(id: 8) { id visits { totalCount visits { id  } } } }")
             .execute()
-            .path("data.pet.visits.totalCount").entity(int.class).isEqualTo(2)
+            .path("data.pet.visits.totalCount").entity(int.class).isEqualTo(4)
             .path("data.pet.visits[*]").entityList(Object.class).hasSize(2)
             .path("data.pet.visits.visits[0].id").entity(String.class).isEqualTo("2")
             .path("data.pet.visits.visits[1].id").entity(String.class).isEqualTo("3");

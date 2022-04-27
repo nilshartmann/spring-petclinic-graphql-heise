@@ -1,6 +1,8 @@
 package org.springframework.samples.petclinic.graphql;
 
 import graphql.schema.DataFetchingEnvironment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -77,9 +79,12 @@ public class OwnerController {
         return new OwnerSearchResult(ownerRepository.findAll(filter.orElse(null), pageRequest));
     }
 
+    private static final Logger log = LoggerFactory.getLogger( OwnerController.class );
+
     @QueryMapping
     public Owner owner(DataFetchingEnvironment env) {
         int id = env.getArgument("id");
+        log.info("Loading Owner {} from database", id);
         return ownerRepository.findById(id);
     }
 

@@ -3,7 +3,7 @@
 This is a fork of the [Spring Pet Clinic Sample Application
 for Spring-GraphQL](https://github.com/spring-petclinic/spring-petclinic-graphql).
 It contains the source code for the (german) article *"Spring for GraphQL" in der Praxis: Eine GraphQL-API für die Tierklinik* 
- for *heise Developer* by [Nils Hartmann](https://nilshartmann.net).
+ for *heise Developer* by [Nils Hartmann](https://nilshartmann.net) and my [short introduction video on DataLoaders](https://youtu.be/wgPAQ0K2e5Y).
 
 Compared to the original example, this one uses also a Microservice
 in the backend to retrieve data.

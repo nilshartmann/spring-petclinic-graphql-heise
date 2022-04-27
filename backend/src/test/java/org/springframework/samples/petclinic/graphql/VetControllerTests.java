@@ -108,7 +108,7 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
             .execute()
             .path("vets").entityList(Object.class).hasSizeGreaterThan(3)
             .path("vets[2].specialties").entityList(Object.class).hasSize(2)
-            .path("vets[3].visits.totalCount").entity(int.class).isEqualTo(2)
+            .path("vets[3].visits.totalCount").entity(int.class).isEqualTo(3)
             .path("vets[3].visits.visits[0].id").entity(String.class).isEqualTo("1")
             .path("vets[3].visits.visits[0].pet.id").entity(String.class).isEqualTo("7")
         ;
@@ -143,7 +143,7 @@ public class VetControllerTests extends AbstractClinicGraphqlTests{
         userRoleGraphQlTester.document(query)
             .execute()
             .path("vet.specialties[0].id").entity(int.class).isEqualTo(2)
-            .path("vet.visits.totalCount").entity(int.class).isEqualTo(2)
+            .path("vet.visits.totalCount").entity(int.class).isEqualTo(3)
             .path("vet.visits.visits[0].id").entity(String.class).isEqualTo("1")
             .path("vet.visits.visits[0].pet.id").entity(String.class).isEqualTo("7")
         ;

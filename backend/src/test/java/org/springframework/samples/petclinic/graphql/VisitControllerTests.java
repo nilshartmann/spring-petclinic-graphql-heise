@@ -5,12 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.WebGraphQlTester;
 import org.springframework.test.annotation.DirtiesContext;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
 
 public class VisitControllerTests extends AbstractClinicGraphqlTests {
@@ -19,18 +22,24 @@ public class VisitControllerTests extends AbstractClinicGraphqlTests {
 
     @Test
     public void visit_shouldIncludeTreatingVet() {
-        when(vetServiceClient.vetById(4))
-            .thenReturn(Mono.just(new VetResource(
-                4, "Klaus", "Dieter", List.of()
+        when(vetServiceClient.vetsWithIds(Set.of(1, 4, 2)))
+            .thenReturn(Flux.just(new VetResource(
+                1, "Klaus", "Dieter", List.of()
+            ),new VetResource(
+                4, "Smith", "Carla", List.of()
+            ),new VetResource(
+                2, "Shawn", "Clark", List.of()
             )));
         userRoleGraphQlTester
             .document("query { pet(id: 8) { id visits { visits { id treatingVet { id } } } } }")
             .execute()
-            .path("data.pet.visits.visits[*]").entityList(Object.class).hasSize(2)
+            .path("data.pet.visits.visits[*]").entityList(Object.class).hasSize(4)
             .path("data.pet.visits.visits[0].id").entity(String.class).isEqualTo("2")
-            .path("data.pet.visits.visits[0].treatingVet").valueIsNull()
             .path("data.pet.visits.visits[1].id").entity(String.class).isEqualTo("3")
-            .path("data.pet.visits.visits[1].treatingVet.id").entity(String.class).isEqualTo("4");
+            .path("data.pet.visits.visits[0].treatingVet.id").entity(String.class).isEqualTo("1")
+            .path("data.pet.visits.visits[1].treatingVet.id").entity(String.class).isEqualTo("4")
+            .path("data.pet.visits.visits[2].treatingVet.id").entity(String.class).isEqualTo("2")
+            .path("data.pet.visits.visits[3].treatingVet.id").entity(String.class).isEqualTo("4");
     }
 
     @Test
@@ -64,8 +73,8 @@ public class VisitControllerTests extends AbstractClinicGraphqlTests {
     @Test
     @DirtiesContext
     void shouldAddNewVisitFromVariablesWithVetId(@Autowired WebGraphQlTester graphQlTester) {
-        when(vetServiceClient.vetById(anyInt()))
-            .thenReturn(Mono.just(new VetResource(1, "Horst", "Schimansky", List.of())));
+        when(vetServiceClient.vetsWithIds(anySet()))
+            .thenReturn(Flux.just(new VetResource(1, "Horst", "Schimansky", List.of())));
 
         userRoleGraphQlTester
             .documentName("addVisitMutationWithVariables")

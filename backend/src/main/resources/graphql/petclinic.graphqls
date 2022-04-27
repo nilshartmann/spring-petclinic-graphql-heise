@@ -1,4 +1,16 @@
 scalar Date
+"""Enable trace informations on the extensions field.
+
+Use this directive on your most top-level field to enable tracing information"""
+directive @trace on FIELD
+"""Enable trace informations in human readable string format on the extensions field.
+
+Use this directive on your most top-level field to enable tracing information
+
+Note: this will also log trivial datafetchers, whereas `@trace` adds non trivial
+datafetchers
+"""
+directive @traceAll on FIELD
 
 # The Query type provides all entry points to the PetClinic GraphQL schema
 type Query {
@@ -31,6 +43,8 @@ type Query {
     specialties: [Specialty!]!
 
     me: User!
+
+    visits(petId: ID): [Visit!]!
 }
 
 type PageInfo {
@@ -144,10 +158,13 @@ type Pet {
 # A Visit of a Pet in our PetClinic
 type Visit {
     id: Int!
-    # What did the Vet do during the Visit?
+    """What did the Vet do during the Visit?"""
     description: String!
 
     pet: Pet!
+
+    """The vet id (for debugging/demo only)"""
+    treatingVetId: Int
 
     # Optional: which veterinary has done this treatment?
     treatingVet: Vet
